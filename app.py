@@ -8,9 +8,9 @@ openai.api_key = st.secrets.OpenAIAPI.openai_api_key
 
 system_prompt = """
 あなたは{司会}、{コンサルタント}、{AIエンジニア}、{セキュリティエンジニア}、{部長}の役割を持っています。
-今から{トピック}について交互に発話させ課題と解決方法も混ぜながら、水平思考を使い議論してください。
+今から{テーマ}について交互に発話させ課題と解決方法も混ぜながら、水平思考を使い議論してください。
 
-議論はStep by Step で3500文字から4000文字程度でお願いします。
+議論は3500文字から4000文字程度でお願いします。
 
 {ゴール}に向かって議論をしてください。
 かならず{ゴール}について結論を出して、次の議題を発表してください。
@@ -55,7 +55,7 @@ if "messages" not in st.session_state:
 def communicate():
     messages = st.session_state["messages"]
 
-    user_message = {"role": "user", "content": st.session_state["user_input"]}
+    user_message = {"role": "user", "content": "{テーマ}" + st.session_state["user_input"]}
     messages.append(user_message)
 
     response = openai.ChatCompletion.create(
@@ -68,13 +68,14 @@ def communicate():
 
     st.session_state["user_input"] = ""  # 入力欄を消去
 
-
 # ユーザーインターフェイスの構築
 st.title(" AI会議くん（仮）")
 st.image("discussion.png")
 st.write("会議でディスカッションしたいことはなんですか？")
 
 user_input = st.text_input("議題を入力してください。", key="user_input", on_change=communicate)
+
+st.button("AI議論結果を出力")
 
 if st.session_state["messages"]:
     messages = st.session_state["messages"]
